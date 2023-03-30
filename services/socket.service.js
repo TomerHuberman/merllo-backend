@@ -13,6 +13,19 @@ function setupSocketAPI(http) {
         socket.on('disconnect', socket => {
             logger.info(`Socket disconnected [id: ${socket.id}]`)
         })
+        socket.on('board-set-id', id => {
+            if (socket.myBoardId === id) return
+            if (socket.myBoardId) {
+                socket.leave(socket.myBoardId)
+                logger.info(`Socket is leaving topic ${socket.myBoardId} [id: ${socket.id}]`)
+            }
+            socket.join(id)
+            socket.myBoardId = id
+        })
+        socket.on('update-board', board => {
+            logger.info(`${board} for socket [id: ${socket.id}]`)
+            socket.broadcast.to(socket.myBoardId).emit('get-updated-board', board)
+        })
         socket.on('chat-set-topic', topic => {
             if (socket.myTopic === topic) return
             if (socket.myTopic) {
