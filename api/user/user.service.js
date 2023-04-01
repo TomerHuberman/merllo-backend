@@ -13,7 +13,7 @@ module.exports = {
     add
 }
 
-async function query(filterBy = {}) {
+async function query(filterBy = { txt: '' }) {
     const criteria = _buildCriteria(filterBy)
     try {
         const collection = await dbService.getCollection('user')
