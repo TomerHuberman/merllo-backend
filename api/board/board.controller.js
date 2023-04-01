@@ -6,7 +6,8 @@ async function getBoards(req, res) {
   try {
     logger.debug('Getting Boards')
     const filterBy = {
-      txt: req.query.txt || ''
+      txt: req.query.txt || '',
+      memberId: req.query.memberId || ''
     }
     const boards = await boardService.query(filterBy)
     res.json(boards)
