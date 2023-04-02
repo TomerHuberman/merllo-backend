@@ -7,7 +7,7 @@ async function query(filterBy = { txt: "", memberId: "" }) {
   try {
     const criteria = {
       title: { $regex: filterBy.txt, $options: "i" },
-      'members._id': filterBy.memberId  ,
+      "members._id": filterBy.memberId,
     };
     const collection = await dbService.getCollection("board");
     var boards = await collection.find(criteria).toArray();
@@ -51,7 +51,8 @@ async function add(board) {
   }
 }
 
-async function update(board,newActivity) {
+async function update(board, newActivity) {
+  console.log("newActivity: ", newActivity);
   try {
     const boardToSave = {
       title: board.title,
@@ -65,12 +66,14 @@ async function update(board,newActivity) {
       style: board.style,
       // activities: board.activities,
     };
+    let updateObj;
+    if (newActivity) {
+      updateObj = { $set: boardToSave, $push: { activities: newActivity } };
+    } else {
+      updateObj = { $set: boardToSave };
+    }
     const collection = await dbService.getCollection("board");
-    await collection.updateOne(
-      { _id: ObjectId(board._id) },
-      { $set: {boardToSave} },
-      {$push:{ activities:newActivity}}
-    );
+    await collection.updateOne({ _id: ObjectId(board._id) }, updateObj);
     console.log("board: ", board);
     return board;
   } catch (err) {
