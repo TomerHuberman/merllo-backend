@@ -51,7 +51,7 @@ async function add(board) {
   }
 }
 
-async function update(board) {
+async function update(board,newActivity) {
   try {
     const boardToSave = {
       title: board.title,
@@ -63,12 +63,13 @@ async function update(board) {
       groups: board.groups,
       members: board.members,
       style: board.style,
-      activities: board.activities,
+      // activities: board.activities,
     };
     const collection = await dbService.getCollection("board");
     await collection.updateOne(
       { _id: ObjectId(board._id) },
-      { $set: boardToSave }
+      { $set: {boardToSave} },
+      {$push:{ activities:newActivity}}
     );
     console.log("board: ", board);
     return board;
