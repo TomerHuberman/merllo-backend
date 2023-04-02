@@ -35,7 +35,7 @@ function setupSocketAPI(http) {
         socket.on('update-board', board => {
             logger.info(`${board} for socket [id: ${socket.id}]`)
             
-            socket.broadcast.to(socket.boardIndex).emit('get-updated-board', board)
+            // socket.broadcast.to(socket.boardIndex).emit('get-updated-board', board)
             socket.broadcast.to(socket.myBoardId).emit('get-updated-board', board)
         })
         socket.on('chat-set-topic', topic => {
