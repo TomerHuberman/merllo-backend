@@ -22,8 +22,20 @@ function setupSocketAPI(http) {
             socket.join(id)
             socket.myBoardId = id
         })
+        socket.on('board-index', index => {
+            if (socket.boardIndex) {
+                socket.leave(socket.boardIndex)
+                socket.boardIndex = null
+                logger.info(`Socket is leaving topic ${socket.boardIndex} [id: ${socket.id}]`)
+                return
+            }
+            socket.join(index)
+            socket.boardIndex = index
+        })
         socket.on('update-board', board => {
             logger.info(`${board} for socket [id: ${socket.id}]`)
+            
+            socket.broadcast.to(socket.boardIndex).emit('get-updated-board', board)
             socket.broadcast.to(socket.myBoardId).emit('get-updated-board', board)
         })
         socket.on('chat-set-topic', topic => {
